@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+//    id 'ru.endlesscode.bukkitgradle' version '0.8.2'
+}
+
+group 'ru.dragon-land.texhik'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+//bukkit {
+//    version = '1.16.2'
+//
+////    meta {
+////        description 'Regenerate any loot chests after some time'
+////        version = '0.1-alpha'
+////        url = 'mc.dragon-land.ru'
+////        main = 'ru.dragon_land.texhik.reloot.ReLoot'
+////        authors = ['TEXHIK']
+////    }
+//
+//    run {
+//        // Core type. It can be 'spigot' or 'paper'
+//        core = "spigot"
+//        // Accept EULA
+//        eula = true
+//        // Set online-mode flag
+//        onlineMode = false
+//        // Set server encoding (flag -Dfile.encoding)
+//        encoding = "UTF-8"
+//        // JVM arguments
+//        javaArgs = "-Xms2G -Xmx4G"
+//        bukkitArgs = "-nogui"
+//    }
+//}
+
+task deploy(type: Copy) {
+    dependsOn(jar)
+    from 'build/libs'
+    into 'env/server/1.16.2/plugins'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://maven.enginehub.org/repo/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+}
+
+dependencies {
+//    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+
+    compileOnly 'org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT'
+
+    annotationProcessor 'org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT'
+
+    implementation 'org.xerial:sqlite-jdbc:3.7.2'
+    implementation 'com.github.TechFortress:GriefPrevention:16.7.1'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
