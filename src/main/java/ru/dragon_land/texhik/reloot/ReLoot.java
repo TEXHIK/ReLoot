@@ -12,7 +12,7 @@ import ru.dragon_land.texhik.reloot.treasure.TreasureHolder;
 import java.io.File;
 import java.util.logging.Logger;
 
-@Plugin(name = "ReLoot", version = "0.1 alpha")
+@Plugin(name = "ReLoot", version = "1.0")
 @ApiVersion(ApiVersion.Target.DEFAULT)
 @Author("TEXHIK")
 @SoftDependency("GriefPrevention")
