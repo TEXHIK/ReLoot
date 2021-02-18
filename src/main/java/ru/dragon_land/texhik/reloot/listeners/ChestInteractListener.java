@@ -44,16 +44,13 @@ public class ChestInteractListener implements Listener {
         }
 
         Chest chest = (Chest) block.getState();
-        Player player = event.getPlayer();
 
         if (chest.getLootTable() == null && !treasureHolder.hasLoot(block)) {
             return;
         }
 
-        if (treasureHolder.interacted(block, player)) {
-            player.sendMessage("You've already looted this chest!");
-        } else {
-            player.sendMessage("You found a treasure");
+        Player player = event.getPlayer();
+        if (!treasureHolder.interacted(block, player)) {
             treasureHolder.interact(block, player);
         }
     }
