@@ -18,6 +18,11 @@ public class Treasure {
         players = Collections.emptySet();
     }
 
+    public Treasure(LootTable lootTable, Set<UUID> players) {
+        this.players = players;
+        this.lootTable = lootTable;
+    }
+
     public Treasure(LootTable lootTable) {
         ReLoot.log.info("created new treasure for " + lootTable.getKey().toString());
         this.lootTable = lootTable;
@@ -30,6 +35,10 @@ public class Treasure {
 
     public void addPlayer(Player player) {
         players.add(player.getUniqueId());
+    }
+
+    public Set<UUID> getPlayers() {
+        return players;
     }
 
     public LootTable getLootTable() {
