@@ -37,6 +37,7 @@ public class ReLoot extends JavaPlugin {
             handler = new EmptyClaimsHandler();
         }
         dataStore = new DataStore("data.db");
+        dataStore.init();
         TreasureHolder.getInstance().load(dataStore);
         getServer().getPluginManager().registerEvents(new ChestInteractListener(handler), this);
         getServer().getPluginManager().registerEvents(new SaveListener(), this);

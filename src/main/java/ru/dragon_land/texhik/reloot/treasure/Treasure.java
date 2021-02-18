@@ -1,26 +1,35 @@
 package ru.dragon_land.texhik.reloot.treasure;
 
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.loot.LootTable;
 import ru.dragon_land.texhik.reloot.ReLoot;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class Treasure {
     private LootTable lootTable;
     private final Set<UUID> players;
-    public static final Treasure EMPTY_TREASURE = new Treasure();
+    public static final Treasure EMPTY_TREASURE = new Treasure(Collections.emptySet()){
+        @Override
+        public void addPlayer(Player player) {
+            throw new UnsupportedOperationException("you can not add players to empty treasure!");
+        }
 
-    private Treasure() {
-        players = Collections.emptySet();
+        @Override
+        public void addPlayer(String playerUUID) {
+            throw new UnsupportedOperationException("you can not add players to empty treasure!");
+        }
+    };
+
+    private Treasure(Set<UUID> players) {
+        this.players = players;
     }
 
-    public Treasure(LootTable lootTable, Set<UUID> players) {
-        this.players = players;
-        this.lootTable = lootTable;
+    public Treasure(String lootTableKey) {
+        this.lootTable = Bukkit.getLootTable(toNamespacedKey(lootTableKey));
+        players = new HashSet<>();
     }
 
     public Treasure(LootTable lootTable) {
@@ -37,6 +46,10 @@ public class Treasure {
         players.add(player.getUniqueId());
     }
 
+    public void addPlayer(String playerUUID) {
+        players.add(UUID.fromString(playerUUID));
+    }
+
     public Set<UUID> getPlayers() {
         return players;
     }
@@ -44,5 +57,10 @@ public class Treasure {
     public LootTable getLootTable() {
         return lootTable;
     }
-    //dragon-land.no-ip.org
+
+    private NamespacedKey toNamespacedKey(String key) {
+        String[] loot_tables = key.split(":");
+        //noinspection deprecation - this is the only way to replicate any non-vanilla namespace
+        return new NamespacedKey(loot_tables[0], loot_tables[1]);
+    }
 }
