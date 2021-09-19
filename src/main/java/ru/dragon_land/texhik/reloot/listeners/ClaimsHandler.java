@@ -4,7 +4,5 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public interface ClaimsHandler {
-    default boolean allowDestruction(Block block, Player player) {
-        return true;
-    }
+    boolean allowDestruction(Block block, Player player);
 }

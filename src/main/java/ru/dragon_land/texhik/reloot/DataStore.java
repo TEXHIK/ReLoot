@@ -11,17 +11,18 @@ import static java.util.logging.Level.SEVERE;
 
 public class DataStore {
 
-   private static final String TREASURES_SELECT = "select treasures.id, loot_table loot, players.player_uuid player from treasures join players on treasures.id = players.treasure_id;";
-   private static final String INSERT_TREASURES = "insert into treasures (id, loot_table) values (?, ?) ON CONFLICT DO NOTHING;";
-   private static final String INSERT_PLAYERS = "insert into players (treasure_id, player_uuid) values (?, ?) ON CONFLICT DO NOTHING;;";
-   private static final String CREATE_TREASURES = "create table if not exists treasures(id text primary key, loot_table text)";
-   private static final String CREATE_PLAYERS = "create table if not exists players(treasure_id text references treasures, player_uuid text, primary key (treasure_id, player_uuid))";
+    private static final String TREASURES_SELECT = "select treasures.id, loot_table loot, players.player_uuid player from treasures join players on treasures.id = players.treasure_id;";
+    private static final String INSERT_TREASURES = "insert into treasures (id, loot_table) values (?, ?) ON CONFLICT DO NOTHING;";
+    private static final String INSERT_PLAYERS = "insert into players (treasure_id, player_uuid) values (?, ?) ON CONFLICT DO NOTHING;;";
+    private static final String CREATE_TREASURES = "create table if not exists treasures(id text primary key, loot_table text)";
+    private static final String CREATE_PLAYERS = "create table if not exists players(treasure_id text references treasures on delete cascade, player_uuid text, primary key (treasure_id, player_uuid))";
+    private static final String REMOVE_TREASURE = "delete from treasures where id = ?;";
     private final String url;
     private final Logger logger;
 
     public DataStore(String filename) {
         this.url = "jdbc:sqlite:" + ReLoot.getPluginDataFolder().getPath() + '/' + filename;
-        logger = ReLoot.instance.getLogger();
+        logger = ReLoot.logger;
     }
 
     public void init() {
@@ -40,8 +41,9 @@ public class DataStore {
 
     public Map<String, Treasure> loadTreasures() {
         Map<String, Treasure> treasures = new HashMap<>();
-        try (Connection connection = DriverManager.getConnection(url)) {
-            Statement statement = connection.createStatement();
+        try (Connection connection = DriverManager.getConnection(url);
+             Statement statement = connection.createStatement()) {
+
             statement.execute(TREASURES_SELECT);
             final ResultSet resultSet = statement.getResultSet();
             while (resultSet.next()) {
@@ -50,7 +52,6 @@ public class DataStore {
                 treasures.computeIfAbsent(treasureId, s -> new Treasure(lootTableKey))
                         .addPlayer(resultSet.getString("player"));
             }
-            statement.close();
         } catch (SQLException ex) {
             logger.log(SEVERE, "Failed to load treasures: ", ex);
         }
@@ -58,14 +59,23 @@ public class DataStore {
     }
 
     public void saveTreasures(Map<String, Treasure> treasures) {
-        try (Connection connection = DriverManager.getConnection(url)) {
-            PreparedStatement treasureStatement = connection.prepareStatement(INSERT_TREASURES);
-            PreparedStatement playerStatement = connection.prepareStatement(INSERT_PLAYERS);
+        try (Connection connection = DriverManager.getConnection(url);
+             PreparedStatement addTreasureStatement = connection.prepareStatement(INSERT_TREASURES);
+             PreparedStatement playerStatement = connection.prepareStatement(INSERT_PLAYERS);
+             PreparedStatement removeTreasureStatement = connection.prepareStatement(REMOVE_TREASURE)) {
+
             for (String id : treasures.keySet()) {
                 Treasure treasure = treasures.get(id);
-                treasureStatement.setString(1, id);
-                treasureStatement.setString(2, treasure.getLootTable().getKey().toString());
-                treasureStatement.execute();
+
+                if (treasure == null) {
+                    removeTreasureStatement.setString(1, id);
+                    removeTreasureStatement.execute();
+                    continue;
+                }
+
+                addTreasureStatement.setString(1, id);
+                addTreasureStatement.setString(2, treasure.getLootTable().getKey().toString());
+                addTreasureStatement.execute();
 
                 playerStatement.setString(1, id);
                 for (UUID playerUuid : treasure.getPlayers()) {
@@ -73,10 +83,8 @@ public class DataStore {
                     playerStatement.execute();
                 }
             }
-
         } catch (SQLException ex) {
-            logger.log(SEVERE, "error save/load treasure", ex);
+            logger.log(SEVERE, "Failed to save treasures! ", ex);
         }
     }
-
 }

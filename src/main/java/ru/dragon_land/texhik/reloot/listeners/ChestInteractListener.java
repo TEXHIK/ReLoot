@@ -29,6 +29,8 @@ public class ChestInteractListener implements Listener {
         }
         if (!claimsHandler.allowDestruction(block, player)) {
             event.setCancelled(true);
+        } else {
+            treasureHolder.remove(block);
         }
     }
 

@@ -4,6 +4,7 @@ import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import ru.dragon_land.texhik.reloot.ReLoot;
 
 public class GPClaimsHandler implements ClaimsHandler {
 
@@ -11,6 +12,7 @@ public class GPClaimsHandler implements ClaimsHandler {
 
     public GPClaimsHandler(GriefPrevention griefPrevention) {
         this.griefPrevention = griefPrevention;
+        ReLoot.logger.info("GriefPrevention found. Chests outside of it claims will be protected.");
     }
 
     @Override

@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.loot.LootTable;
-import ru.dragon_land.texhik.reloot.ReLoot;
 
 import java.util.*;
 
@@ -33,7 +32,6 @@ public class Treasure {
     }
 
     public Treasure(LootTable lootTable) {
-        ReLoot.log.info("created new treasure for " + lootTable.getKey().toString());
         this.lootTable = lootTable;
         players = new HashSet<>();
     }
