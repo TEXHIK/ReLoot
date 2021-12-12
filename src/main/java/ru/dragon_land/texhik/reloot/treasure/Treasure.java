@@ -7,6 +7,8 @@ import org.bukkit.loot.LootTable;
 
 import java.util.*;
 
+import static java.util.Objects.requireNonNull;
+
 public class Treasure {
     private LootTable lootTable;
     private final Set<UUID> players;
@@ -27,7 +29,8 @@ public class Treasure {
     }
 
     public Treasure(String lootTableKey) {
-        this.lootTable = Bukkit.getLootTable(toNamespacedKey(lootTableKey));
+        var key = NamespacedKey.fromString(lootTableKey);
+        this.lootTable = Bukkit.getLootTable(requireNonNull(key));
         players = new HashSet<>();
     }
 
@@ -56,9 +59,4 @@ public class Treasure {
         return lootTable;
     }
 
-    private NamespacedKey toNamespacedKey(String key) {
-        String[] loot_tables = key.split(":");
-        //noinspection deprecation - this is the only way to replicate any non-vanilla namespace
-        return new NamespacedKey(loot_tables[0], loot_tables[1]);
-    }
 }
