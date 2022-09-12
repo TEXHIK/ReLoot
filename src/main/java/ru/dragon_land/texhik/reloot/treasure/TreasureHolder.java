@@ -52,7 +52,7 @@ public class TreasureHolder {
 
     public void remove(Block block) {
         String treasureUID = getTreasureUID(block);
-        treasures.put(treasureUID, null);
+        treasures.remove(treasureUID);
         logger.info("Treasure " + treasureUID + " removed (chest destroyed)");
     }
 

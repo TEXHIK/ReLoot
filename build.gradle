@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'ru.dragon-land.texhik'
-version '1.1'
+version '1.2'
 
 sourceCompatibility = 17
 targetCompatibility = 17
@@ -31,7 +31,7 @@ dependencies {
     annotationProcessor 'org.spigotmc:plugin-annotations:1.2.3-SNAPSHOT'
 
     implementation 'org.xerial:sqlite-jdbc:3.36.0.2'
-    implementation 'com.github.TechFortress:GriefPrevention:16.7.1'
+    implementation 'com.github.TechFortress:GriefPrevention:16.18'
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     implementation 'org.slf4j:slf4j-api:1.7.32'
