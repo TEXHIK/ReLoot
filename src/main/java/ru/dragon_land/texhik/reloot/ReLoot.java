@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 @Plugin(name = "ReLoot", version = "1.2")
-@ApiVersion(ApiVersion.Target.DEFAULT)
+@ApiVersion(ApiVersion.Target.v1_19)
 @Author("TEXHIK")
 @SoftDependency("GriefPrevention")
 public class ReLoot extends JavaPlugin {

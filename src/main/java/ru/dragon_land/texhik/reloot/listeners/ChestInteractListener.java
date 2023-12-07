@@ -24,13 +24,21 @@ public class ChestInteractListener implements Listener {
     public void onChestBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         Player player = event.getPlayer();
-        if (block.getType() != Material.CHEST) {
+
+        if (block.getType() != Material.CHEST || !(block.getState() instanceof Chest chest)) {
             return;
         }
-        if (!claimsHandler.allowDestruction(block, player)) {
-            event.setCancelled(true);
-        } else {
+
+        if (chest.getLootTable() == null && !treasureHolder.hasLoot(block)) {
+            return;
+        }
+
+        if (claimsHandler.allowDestruction(block, player)) {
             treasureHolder.remove(block);
+        } else {
+            event.setCancelled(true);
+            //TODO localization
+            player.sendMessage("Other players may find this treasure too. Please, leave it for them:)");
         }
     }
 
@@ -41,11 +49,9 @@ public class ChestInteractListener implements Listener {
         }
 
         Block block = event.getClickedBlock();
-        if (block == null || block.getType() != Material.CHEST || !(block.getState() instanceof Chest)) {
+        if (block == null || block.getType() != Material.CHEST || !(block.getState() instanceof Chest chest)) {
             return;
         }
-
-        Chest chest = (Chest) block.getState();
 
         if (chest.getLootTable() == null && !treasureHolder.hasLoot(block)) {
             return;
